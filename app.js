@@ -16,12 +16,11 @@ const app = express();
 app.use(cors({
     origin: "http://127.0.0.1:5500",
 }));
-
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(userRoutes);
-
 async function main() {
     try {
         await sequelize.sync();
