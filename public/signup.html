@@ -6,30 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Page</title>
     <link rel="stylesheet" href="styles.css">
-    <style></style>
+    <style>
+
+    </style>
 
 </head>
 
 <body>
+    <div class="animated-bg"></div>
+    <div class="signup-container">
+        <form id="signup">
+            <h1 style="text-align: center; color: #c79e68;">Sign Up</h1>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" placeholder="Ex: Ram" required>
 
-    <form id="signup">
-        <h1 style="text-align: center;">Sign Up</h1>
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Ex: Ram@gmail.com" required>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" placeholder="Ex:9998899988" required>
+            <small>Enter a 10-digit phone number</small>
+            <br></br>
 
-        <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
-        <small>Enter a 10-digit phone number</small>
-        <br></br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Strong password recommended" required>
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Sign Up</button>
-    </form>
+            <input type="submit" value="Join Now" id="button">
+            <div class="signin-link">
+                <p style="text-align: center; color: #533f2c;">Already have an account? <a href="#">Sign In</a></p>
+            </div>
+            
+        </form>
+    </div>
     <script src="signup.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </body>
