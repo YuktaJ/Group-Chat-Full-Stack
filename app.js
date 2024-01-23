@@ -8,7 +8,8 @@ const cors = require("cors");
 
 const userRoutes = require("./routes/User");
 const User = require("./models/User");
-
+const messageRoutes = require("./routes/Message.js");
+const Message = require("./models/Message");
 
 
 const app = express();
@@ -21,6 +22,10 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.use(userRoutes);
+app.use(messageRoutes);
+
+User.hasMany(Message);
+
 async function main() {
     try {
         await sequelize.sync();

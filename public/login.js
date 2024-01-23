@@ -16,7 +16,7 @@ async function loginPage(event) {
         if (result.status === 201) {
             alert(result.data.message);
             localStorage.setItem('token', result.data.token);
-            //window.location.href =""
+            window.location.href = "./chat.html"
         }
     } catch (error) {
         document.body.innerHTML += `<div style="color: orange; text-align:center">${error.response.data.message}</div>`
