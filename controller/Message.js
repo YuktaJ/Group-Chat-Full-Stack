@@ -17,3 +17,16 @@ exports.postAddMessage = async (req, res) => {
         })
     }
 }
+
+exports.getMessage = async (req, res) => {
+    try {
+        let message = await Message.findAll();
+        res.status(201).json({
+            message: message
+        });
+    } catch (error) {
+        res.status(500).json({
+            error: "Couldn't fetch messages."
+        })
+    }
+}
