@@ -81,7 +81,7 @@ exports.postLogin = async (req, res) => {
         } else {
             await t.commit();
             return res.status(201).json({
-                token: exports.generateAccessToken(user.id, user.password),
+                token: exports.generateAccessToken(user.id, user.name),
                 message: "User logged in successfully",
                 success: true
             })

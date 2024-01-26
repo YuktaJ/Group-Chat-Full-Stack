@@ -2,6 +2,8 @@ document.getElementById("login").addEventListener("submit", (event) => {
     loginPage(event);
 });
 
+
+
 async function loginPage(event) {
     event.preventDefault();
 
@@ -13,6 +15,7 @@ async function loginPage(event) {
     }
     try {
         let result = await axios.post("http://localhost:3000/login", obj);
+        
         if (result.status === 201) {
             alert(result.data.message);
             localStorage.setItem('token', result.data.token);
