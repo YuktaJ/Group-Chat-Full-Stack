@@ -1,11 +1,12 @@
 const User = require("../models/User");
-
 const jwt = require("jsonwebtoken");
 
 exports.authenticate = async (req, res, next) => {
     try {
         const token = req.header("token");
-        const user = jwt.verify(token, "SecretYukta"); //token correct hai ki nahi 
+        console.log(token);
+        const user = jwt.verify(token, "SecretYukta"); //token correct hai ki nahi
+        console.log(user);
         if (!user) {
             throw new Error("INVALID USER");
         } else {

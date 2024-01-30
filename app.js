@@ -10,6 +10,7 @@ const userRoutes = require("./routes/User");
 const User = require("./models/User");
 const messageRoutes = require("./routes/Message.js");
 const Message = require("./models/Message");
+const Groups = require('./models/Groups.js');
 
 
 const app = express();
@@ -24,8 +25,13 @@ app.use(express.json());
 app.use(userRoutes);
 app.use(messageRoutes);
 
+
 User.hasMany(Message);
 
+Groups.belongsToMany(User, { through: "Users_Group" });
+User.belongsToMany(Groups, { through: "Users_Group" });
+
+Groups.hasMany(Message);
 async function main() {
     try {
         await sequelize.sync();
@@ -35,4 +41,5 @@ async function main() {
         console.log(error);
     }
 }
+
 main();

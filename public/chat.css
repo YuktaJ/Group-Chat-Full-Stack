@@ -53,3 +53,31 @@ body {
     cursor: pointer;
     font-size: 16px;
 }
+
+#group-container {
+    position: fixed;
+    top: 18px;
+    left: 30px;
+    width: 400px;
+    height: 400px;
+    background-color: rgb(159, 141, 126);
+    color: #fff;
+    padding: 10px;
+    border: 3px solid rgb(255, 227, 189);
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#groups {
+    position: fixed;
+    top: 400px;
+    left: 30px;
+    width: 400px;
+    height: 400px;
+    background-color: rgb(159, 141, 126);
+    color: #fff;
+    padding: 10px;
+    border: 3px solid rgb(255, 227, 189);
+    cursor: pointer;
+    font-size: 16px;
+}
