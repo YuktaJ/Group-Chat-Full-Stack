@@ -2,7 +2,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-
+    background: linear-gradient(45deg, #6c490d, #553720, #957c4f, #fedf9e);
 }
 
 .chat-container {
@@ -11,14 +11,13 @@ body {
     margin: auto;
     padding: 20px;
     box-sizing: border-box;
-
 }
 
 .chat-messages {
-    background: #cba979;
+    background: #403424;
     border: 3px solid #d3bc98;
     padding: 10px;
-    max-height: 300px;
+    max-height: 500px;
     overflow-y: auto;
 }
 
@@ -58,7 +57,7 @@ body {
     position: fixed;
     top: 18px;
     left: 30px;
-    width: 400px;
+    width: 370px;
     height: 400px;
     background-color: rgb(159, 141, 126);
     color: #fff;
@@ -72,8 +71,8 @@ body {
     position: fixed;
     top: 400px;
     left: 30px;
-    width: 400px;
-    height: 400px;
+    width: 370px;
+    height: 290px;
     background-color: rgb(159, 141, 126);
     color: #fff;
     padding: 10px;
@@ -84,10 +83,10 @@ body {
 
 #group-details {
     position: fixed;
-    left: 1150px;
+    left: 1010px;
     top: 20px;
-    width: 400px;
-    height: 780px;
+    width: 380px;
+    height: 400px;
     background-color: rgb(159, 141, 126);
     color: #fff;
     padding: 10px;

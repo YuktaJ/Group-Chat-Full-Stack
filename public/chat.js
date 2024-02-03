@@ -1,5 +1,12 @@
-
-
+let groupId;
+const socket = io(window.location.origin);
+socket.on("group-message", (id, text) => {
+    console.log(groupId, text, "Backend Se Lenge");
+    let groupid = localStorage.getItem("groupid");
+    if (groupid == id) {
+        getChat(id);
+    }
+})
 localStorage.removeItem("message");
 document.getElementById("Send").addEventListener("click", (event) => {
     SendChat(event);
@@ -19,7 +26,7 @@ function parseJwt(token) {
 
     return JSON.parse(jsonPayload);
 }
-let groupId;
+
 async function SendChat(event) {
 
     let message = document.getElementById("message").value;
@@ -34,6 +41,7 @@ async function SendChat(event) {
         let res = await axios.post("http://localhost:3000/message", obj, { headers: { token: token } });
         arr.push(res.data.text);
         document.getElementById("message").value = "";
+        socket.emit("new-group-message", groupId, res.data.text);
         chatOnScreen(arr, res.data.userId);
     } catch (error) {
         console.log(error);
@@ -117,14 +125,14 @@ function chatOnScreen(arr, user_arr) {
 }
 getChat();
 
-function autoRefresh() {
-    let parentEle = document.getElementById("chats");
-    parentEle.innerHTML = "";
-    getChat();
-    ScrollToBottom();
+// function autoRefresh() {
+//     let parentEle = document.getElementById("chats");
+//     parentEle.innerHTML = "";
+//     getChat();
+//     ScrollToBottom();
 
-}
-setInterval(autoRefresh, 10000);
+// }
+// setInterval(autoRefresh, 10000);
 
 function ScrollToBottom() {
     let parent = document.getElementById("chats");
