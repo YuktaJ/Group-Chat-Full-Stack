@@ -1,4 +1,6 @@
 
+
+localStorage.removeItem("message");
 document.getElementById("Send").addEventListener("click", (event) => {
     SendChat(event);
 });
@@ -131,7 +133,7 @@ function ScrollToBottom() {
 
 async function createGroup() {
     try {
-        let res = await axios.get("http://localhost:3000/groupusers");
+        let res = await axios.get("http://localhost:3000/group-users");
         console.log(res.data.users);
         UsersOnScreen(res.data.users);
     } catch (error) {
@@ -177,7 +179,7 @@ async function CreateBtn(event) {
         }
         console.log(arr, Ele);
         let token = localStorage.getItem("token");
-        let res = await axios.post("http://localhost:3000/groupdetails", obj, { headers: { token: token } });
+        let res = await axios.post("http://localhost:3000/group-details", obj, { headers: { token: token } });
 
     } catch (error) {
         console.log(error)
@@ -187,32 +189,200 @@ async function CreateBtn(event) {
 async function GroupsNames() {
     try {
         let token = localStorage.getItem("token");
-        let res = await axios.get("http://localhost:3000/groupnames", { headers: { token: token } });
-        ShowGroupsOnScreen(res.data.groupnames);
+        let res = await axios.get("http://localhost:3000/group-names", { headers: { token: token } });
+        ShowGroupsOnScreen(res.data.groupnames, res.data.admins);
     } catch (error) {
         console.log(error);
     }
 }
 GroupsNames();
 
-function ShowGroupsOnScreen(group_arr) {
+function ShowGroupsOnScreen(group_arr, admins) {
     let i = 0;
     while (i < group_arr.length) {
         let parentEle = document.getElementById("show-groups")
         let newGroupBtn = document.createElement("button");
         newGroupBtn.innerHTML = group_arr[i].name;
         let group_id = group_arr[i].id;
+        let group_name = group_arr[i].name;
         newGroupBtn.addEventListener("click", (event) => {
-            ShowGroups(group_id);
+            let parentEle = document.getElementById("group-member-details")
+            parentEle.innerHTML = "";
+            localStorage.setItem("groupid", group_id);
+            GetGroupMembers(group_id);
+            ShowGroups(group_id, group_name);
         })
         parentEle.appendChild(newGroupBtn);
+
+        for (let i = 0; i < admins.length; i++) {
+            if (admins[i].groupId == group_id) {
+
+                let edit_btn = document.createElement("button");
+                localStorage.setItem("groupid", group_id);
+                edit_btn.innerHTML = "Edit";
+                edit_btn.onclick = openForm;
+
+                function openForm() {
+                    document.getElementById("overlay").style.display = "flex";
+                }
+                document.getElementById("closeForm").addEventListener("click", () => {
+                    document.getElementById("overlay").style.display = "none";
+                })
+                parentEle.appendChild(edit_btn);
+            }
+        }
+        let br = document.createElement("br");
+        parentEle.appendChild(br);
         i++;
     }
 
 }
 
-function ShowGroups(id) {
-    localStorage.removeItem("message")
+async function getEditDetails() {
+    try {
+        let id = localStorage.getItem("groupid");
+        let res = await axios.get(`http://localhost:3000/edit_details?data=${id}`);
+        showGroupMembers(res.data.adminUsers,
+            res.data.groupUsers,
+            res.data.otherUsers);
+    } catch (error) {
+        console.log(error);
+    }
+}
+getEditDetails();
+
+function showGroupMembers(admins, members, users) {
+    let group_admins = document.getElementById("group_edit_admins");
+    let group_members = document.getElementById("group_edit_members");
+    let group_otherusers = document.getElementById("group_edit_otherusers");
+    let token = localStorage.getItem("token");
+    let parsedToken = parseJwt(token);
+    let removeAdminBtn = document.createElement("button");
+    removeAdminBtn.innerHTML = "Remove Admin"
+    let removeUserBtn = document.createElement("button");
+    removeUserBtn.innerHTML = "Remove User"
+    let addAdminBtn = document.createElement("button");
+    addAdminBtn.innerHTML = "Add as Admin"
+    let addUserBtn = document.createElement("button");
+    addUserBtn.innerHTML = "Add User"
+
+
+    for (let i = 0; i < admins.length; i++) {
+        if (parsedToken.id != admins[i].id) {
+            let group_admin = document.createElement("h5");
+            group_admin.innerHTML = admins[i].name;
+            group_admin.appendChild(removeAdminBtn);
+            let adminid = admins[i].id;
+            removeAdminBtn.addEventListener("click", (event) => {
+                removeAdmin(event, adminid);
+            });
+            group_admins.appendChild(group_admin);
+        }
+    }
+    for (let j = 0; j < members.length; j++) {
+        let id = members[j].id;
+        let group_member = document.createElement("h5");
+        group_member.innerHTML = members[j].name;
+        group_member.appendChild(addAdminBtn);
+        group_member.appendChild(removeUserBtn);
+        addAdminBtn.addEventListener("click", (event) => {
+            addAdmin(event, id);
+        })
+        removeUserBtn.addEventListener("click", (event) => {
+            removeUser(event, id);
+        })
+        group_members.appendChild(group_member);
+
+    }
+
+    for (let k = 0; k < users.length; k++) {
+        let id = users[k].id;
+        let group_user = document.createElement("h5");
+        group_user.innerHTML = users[k].name;
+        group_user.appendChild(addUserBtn);
+        addUserBtn.addEventListener("click", (event) => {
+            addToGroup(event, id);
+        })
+        group_otherusers.appendChild(group_user);
+    }
+
+}
+async function removeAdmin(event, id) {
+    try {
+        let groupid = localStorage.getItem("groupid");
+        let res = await axios.post("http://localhost:3000/remove-admin", {
+            groupid, id
+        })
+        if (res.status == 200) {
+            alert(res.data.message);
+            window.location.href = "./chat.html"
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+async function addAdmin(event, id) {
+    try {
+        let groupid = localStorage.getItem("groupid");
+        let res = await axios.post("http://localhost:3000/add-admin", {
+            groupid, id
+        })
+        if (res.status == 200) {
+            alert(res.data.message);
+            window.location.href = "./chat.html"
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+async function removeUser(event, id) {
+    try {
+        let groupid = localStorage.getItem("groupid");
+        let res = await axios.post("http://localhost:3000/remove-user", {
+            groupid, id
+        })
+        if (res.status == 200) {
+            alert(res.data.message);
+            window.location.href = "./chat.html"
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+async function addToGroup(event, id) {
+    try {
+        let groupid = localStorage.getItem("groupid");
+        let res = await axios.post("http://localhost:3000/add-user", {
+            groupid, id
+        })
+        if (res.status == 200) {
+            alert(res.data.message);
+            window.location.href = "./chat.html"
+        }
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+async function GetGroupMembers(id) {
+    let res = await axios.get(`http://localhost:3000/group-members?groupid=${id}`);
+    console.log(res.data.groupMembers)
+    let parentEle = document.getElementById("group-member-details");
+    let members = res.data.groupMembers;
+
+
+    for (let i = 0; i < members.length; i++) {
+        let h4 = document.createElement("h4");
+        h4.innerHTML = members[i].name;
+        parentEle.appendChild(h4);
+    }
+}
+
+function ShowGroups(id, name) {
+    localStorage.removeItem("message");
+    let parentEle = document.getElementById("group-name-chat");
+    document.getElementById("chats").innerHTML = "";
+    parentEle.innerHTML = "GROUP-NAME:" + name;
     groupId = id;
     getChat(id);
 }

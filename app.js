@@ -9,8 +9,10 @@ const cors = require("cors");
 const userRoutes = require("./routes/User");
 const User = require("./models/User");
 const messageRoutes = require("./routes/Message.js");
-const Message = require("./models/Message");
+const Message = require("./models/Message.js");
 const Groups = require('./models/Groups.js');
+const ForgotPassword = require("./models/ResetPassword.js");
+const Admins = require("./models/Admins.js");
 
 
 const app = express();
@@ -27,11 +29,15 @@ app.use(messageRoutes);
 
 
 User.hasMany(Message);
+User.hasMany(Admins);
 
 Groups.belongsToMany(User, { through: "Users_Group" });
 User.belongsToMany(Groups, { through: "Users_Group" });
 
 Groups.hasMany(Message);
+Groups.hasMany(Admins);
+
+
 async function main() {
     try {
         await sequelize.sync();
