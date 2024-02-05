@@ -14,11 +14,11 @@ body {
 }
 
 .chat-messages {
-    background: #403424;
+    background: linear-gradient(45deg, #c6c1b8, #f9efe8, #c5c5c5, #ffffff);
     border: 3px solid #d3bc98;
     padding: 10px;
-    max-height: 500px;
-    overflow-y: auto;
+    max-height: 660px;
+    overflow-y: scroll;
 }
 
 .chat-footer {
@@ -132,4 +132,13 @@ body {
     width: 50px;
     top: 10px;
     right: 15px;
+}
+
+.list-group-items {
+    list-style-type: none;
+    margin-top: 2px;
+    height: auto;
+    width: 180px;
+    background-color: #beaa8b;
+    border-radius: 5px;
 }

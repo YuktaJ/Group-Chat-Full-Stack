@@ -35,7 +35,6 @@ async function SendChat(event) {
         message, groupId
     }
     let arr = [];
-    // let local_message = localStorage.setItem("message", message)
     try {
         let token = localStorage.getItem("token");
         let res = await axios.post("http://localhost:3000/message", obj, { headers: { token: token } });
@@ -49,6 +48,7 @@ async function SendChat(event) {
     }
     ScrollToBottom();
 }
+
 
 async function getChat(id) {
     let token = localStorage.getItem('token');
@@ -103,19 +103,74 @@ function chatOnScreen(arr, user_arr) {
     let i = 0;
     while (i < arr.length) {
         if (arr[i].userId === id) {
-            let childEle = document.createElement("ul");
-            childEle.textContent = `you: ${arr[i].text} `;
-            childEle.className = "text-messages";
-            childEle.style = "text-align:right";
-            parentEle.appendChild(childEle);
+            if (arr[i].isImage) {
+                let childEle = document.createElement("li");
+                childEle.innerHTML = `<big><sup style="text-align: right;">You: </sup>
+                <img src="${arr[i].url}" style="width:100%; height:150px; background-size:contain"></img> </big>`;
+                childEle.className = "list-group-items";
+                childEle.style.margin = "10px 0px 0px 350px"
+                parentEle.appendChild(childEle);
+
+            } else if (arr[i].isVideo) {
+                let childEle = document.createElement("li");
+                childEle.innerHTML = `<big><sup style="text-align: right;">You: </sup>
+                <video src="${arr[i].url}" style="width:100%; height:150px; background-size:contain" controls></video> </big>`;
+                childEle.style.margin = "10px 0px 0px 350px"
+                childEle.className = "list-group-items";
+
+                parentEle.appendChild(childEle);
+            } else if (arr[i].isDocument) {
+                let childEle = document.createElement("li");
+
+                childEle.innerHTML = `<big><sup style="text-align: right;">You:</sup>
+                <a href="${arr[i].url}" alt="Document">Tap Here</big>`;
+                childEle.style.margin = "10px 0px 0px 350px"
+                childEle.className = "list-group-items";
+
+
+                parentEle.appendChild(childEle);
+            } else {
+                let childEle = document.createElement("li");
+                childEle.innerHTML = `<big>you: ${arr[i].text} </big>`;
+
+                childEle.className = "list-group-items";
+                childEle.style.margin = "10px 0px 0px 350px"
+                parentEle.appendChild(childEle);
+            }
+
         } else {
+
             for (let j = 0; j < user_arr.length; j++) {
-                if (user_arr[j].id === arr[i].userId) {
-                    let childEle = document.createElement("ul");
-                    childEle.textContent = `${user_arr[j].name}: ${arr[i].text} `;
-                    childEle.className = "text-messages";
-                    childEle.style = "text-align:right";
-                    parentEle.appendChild(childEle);
+                if (user_arr[j].id == arr[i].userId) {
+                    if (arr[i].isImage) {
+                        let childEle = document.createElement("li");
+                        childEle.innerHTML = `<big>${user_arr[j].name}: <img src="${arr[i].url}" style="width:100%; height:150px; background-size:contain"></img> </big>`;
+                        childEle.className = "list-group-items";
+                        childEle.style = "text-align:left; color:white";
+
+                        parentEle.appendChild(childEle);
+                    } else if (arr[i].isVideo) {
+                        let childEle = document.createElement("li");
+                        childEle.innerHTML = `<big>
+                        <video  src="${arr[i].url}" style="width:100%; height:150px; background-size:contain" controls></video><sup style="text-align: right;">:${user_arr[j].name} </sup> </big>`;
+                        childEle.className = "list-group-items";
+                        childEle.style = "text-align:left; color:white";
+
+                        parentEle.appendChild(childEle);
+                    } else if (arr[i].isDocument) {
+                        let childEle = document.createElement("li");
+                        childEle.innerHTML = `<big><sup style="text-align: right;">${user_arr[j].name}</sup>
+                        <a href="${arr[i].url}" alt="Document">Tap Here</big>`; childEle.className = "list-group-items";
+                        childEle.style = "text-align:left; color:white";
+
+                        parentEle.appendChild(childEle);
+                    } else {
+                        let childEle = document.createElement("li");
+                        childEle.innerHTML = ` <big>${user_arr[j].name}: ${arr[i].text}  </big>`;
+                        childEle.className = "list-group-items";
+                        childEle.style = "text-align:left; color:white";
+                        parentEle.appendChild(childEle);
+                    }
                 }
             }
         }
@@ -393,4 +448,56 @@ function ShowGroups(id, name) {
     parentEle.innerHTML = "GROUP-NAME:" + name;
     groupId = id;
     getChat(id);
+}
+
+document.getElementById("share_input").addEventListener("change", (event) => {
+    shareFiles(event);
+});
+
+async function shareFiles(event) {
+    event.preventDefault();
+    const formData = new FormData();
+    let fileInput = document.getElementById("share_input");
+    const fileType = fileInput.files[0].type;
+
+    formData.append("file", fileInput.files[0]);
+
+    const token = localStorage.getItem("token");
+    let parsedToken = parseJwt(token);
+    let userName = parsedToken.name;
+    let groupid = localStorage.getItem("groupid");
+    try {
+        const response = await axios.post(
+            `http://localhost:3000/upload-files?groupid=${groupid}`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    token: token,
+                },
+            }
+        );
+        let arr = [];
+        arr.push(response.data.result);
+        let user_arr = [];
+        user_arr.push(parsedToken);
+        if (fileType.startsWith("image/")) {
+            // Handle image upload
+            chatOnScreen(arr, user_arr);
+            socket.emit("new-group-message", groupid, response.data.result, userName);
+        } else if (fileType.startsWith("video/")) {
+            // Handle video upload
+            chatOnScreen(arr, user_arr);
+            socket.emit("new-group-message", groupid, response.data.result, userName);
+            // Implement your video handling code here
+        } else {
+            // Handle document upload
+            chatOnScreen(arr, user_arr);
+            socket.emit("new-group-message", groupid, response.data.result, userName);
+            // Implement your document handling code here
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
 }
