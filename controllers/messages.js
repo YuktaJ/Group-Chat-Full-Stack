@@ -1,8 +1,10 @@
-const Message = require("../models/Message");
-const User = require("../models/User");
+const Message = require("../models/messages");
+const User = require("../models/users");
 const { Op, Model } = require("sequelize");
-const Groups = require("../models/Groups");
-const Admins = require("../models/Admins");
+const Groups = require("../models/groups");
+const Admins = require("../models/admins");
+const awsService = require("../services/aws-s3");
+const fs = require("fs");
 
 exports.postAddMessage = async (req, res) => {
     try {
@@ -67,7 +69,7 @@ exports.getMessage = async (req, res) => {
     }
 }
 
-exports.groupusers = async (req, res) => {
+exports.groupUsers = async (req, res) => {
     try {
         let users = await User.findAll();
         res.status(200).json({
@@ -80,7 +82,7 @@ exports.groupusers = async (req, res) => {
     }
 }
 
-exports.groupdetails = async (req, res) => {
+exports.groupDetails = async (req, res) => {
     let members = 0;
     try {
         let arr = req.body.Ele;
@@ -113,11 +115,13 @@ exports.groupdetails = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            error: "Something went wrong."
+        })
     }
 }
 
-exports.groupnames = async (req, res, next) => {
+exports.groupNames = async (req, res, next) => {
     try {
 
         let groupnames = await req.user.getGroups();
@@ -270,5 +274,58 @@ exports.addUser = async (req, res) => {
         res.status(500).json({
             error: "Something went wrong."
         })
+    }
+}
+
+exports.uploadFiles = async (req, res) => {
+    try {
+        const file = req.file;
+        console.log(file);
+
+        const groupid = req.query.groupid;
+        const fileContent = fs.readFileSync(file.path);
+        const filename = file.originalname;
+        const filetype = file.mimetype;
+        console.log(fileContent, "Content", filename, filetype);
+        let fileUrl = await awsService.UploadToS3(fileContent, filename, filetype);
+
+        if (filetype.split("/")[0] == "image") {
+            let result = await Message.create({
+                url: fileUrl,
+                isImage: true,
+                groupId: groupid,
+                userId: req.user.id
+            })
+            return res.status(200).json({
+                result
+            })
+        } else if (filetype.split("/")[0] == "video") {
+            let result = await Message.create({
+                url: fileUrl,
+                isVideo: true,
+                groupId: groupid,
+                userId: req.user.id
+            })
+            return res.status(200).json({
+                result
+            })
+        } else {
+            let result = await Message.create({
+                url: fileUrl,
+                isDocument: true,
+                groupId: groupid,
+                userId: req.user.id
+            })
+            return res.status(200).json({
+                result
+            })
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            error: "Something went wrong."
+
+        });
     }
 }

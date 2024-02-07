@@ -37,7 +37,7 @@ async function SendChat(event) {
     let arr = [];
     try {
         let token = localStorage.getItem("token");
-        let res = await axios.post("http://localhost:3000/message", obj, { headers: { token: token } });
+        let res = await axios.post("http://54.219.177.84:3000/messages", obj, { headers: { token: token } });
         arr.push(res.data.text);
         document.getElementById("message").value = "";
         socket.emit("new-group-message", groupId, res.data.text);
@@ -68,7 +68,7 @@ async function getChat(id) {
     console.log(lastId, "Last Id")
 
     try {
-        let res = await axios.get(`http://localhost:3000/message?lastId=${lastId}&groupId=${id}`, { headers: { token: token } });
+        let res = await axios.get(`http://54.219.177.84:3000/messages?lastId=${lastId}&groupId=${id}`, { headers: { token: token } });
         StoreMsgLocalStorage(res.data.message, res.data.users);
 
     } catch (error) {
@@ -196,7 +196,7 @@ function ScrollToBottom() {
 
 async function createGroup() {
     try {
-        let res = await axios.get("http://localhost:3000/group-users");
+        let res = await axios.get("http://54.219.177.84:3000/group-users");
         console.log(res.data.users);
         UsersOnScreen(res.data.users);
     } catch (error) {
@@ -242,7 +242,7 @@ async function CreateBtn(event) {
         }
         console.log(arr, Ele);
         let token = localStorage.getItem("token");
-        let res = await axios.post("http://localhost:3000/group-details", obj, { headers: { token: token } });
+        let res = await axios.post("http://54.219.177.84:3000/group-details", obj, { headers: { token: token } });
 
     } catch (error) {
         console.log(error)
@@ -252,7 +252,7 @@ async function CreateBtn(event) {
 async function GroupsNames() {
     try {
         let token = localStorage.getItem("token");
-        let res = await axios.get("http://localhost:3000/group-names", { headers: { token: token } });
+        let res = await axios.get("http://54.219.177.84:3000/group-names", { headers: { token: token } });
         ShowGroupsOnScreen(res.data.groupnames, res.data.admins);
     } catch (error) {
         console.log(error);
@@ -304,7 +304,7 @@ function ShowGroupsOnScreen(group_arr, admins) {
 async function getEditDetails() {
     try {
         let id = localStorage.getItem("groupid");
-        let res = await axios.get(`http://localhost:3000/edit_details?data=${id}`);
+        let res = await axios.get(`http://54.219.177.84:3000/edit_details?data=${id}`);
         showGroupMembers(res.data.adminUsers,
             res.data.groupUsers,
             res.data.otherUsers);
@@ -373,7 +373,7 @@ function showGroupMembers(admins, members, users) {
 async function removeAdmin(event, id) {
     try {
         let groupid = localStorage.getItem("groupid");
-        let res = await axios.post("http://localhost:3000/remove-admin", {
+        let res = await axios.post("http://54.219.177.84:3000/remove-admin", {
             groupid, id
         })
         if (res.status == 200) {
@@ -387,7 +387,7 @@ async function removeAdmin(event, id) {
 async function addAdmin(event, id) {
     try {
         let groupid = localStorage.getItem("groupid");
-        let res = await axios.post("http://localhost:3000/add-admin", {
+        let res = await axios.post("http://54.219.177.84:3000/add-admin", {
             groupid, id
         })
         if (res.status == 200) {
@@ -401,7 +401,7 @@ async function addAdmin(event, id) {
 async function removeUser(event, id) {
     try {
         let groupid = localStorage.getItem("groupid");
-        let res = await axios.post("http://localhost:3000/remove-user", {
+        let res = await axios.post("http://54.219.177.84:3000/remove-user", {
             groupid, id
         })
         if (res.status == 200) {
@@ -415,7 +415,7 @@ async function removeUser(event, id) {
 async function addToGroup(event, id) {
     try {
         let groupid = localStorage.getItem("groupid");
-        let res = await axios.post("http://localhost:3000/add-user", {
+        let res = await axios.post("http://54.219.177.84:3000/add-user", {
             groupid, id
         })
         if (res.status == 200) {
@@ -428,7 +428,7 @@ async function addToGroup(event, id) {
     }
 }
 async function GetGroupMembers(id) {
-    let res = await axios.get(`http://localhost:3000/group-members?groupid=${id}`);
+    let res = await axios.get(`http://54.219.177.84:3000/group-members?groupid=${id}`);
     console.log(res.data.groupMembers)
     let parentEle = document.getElementById("group-member-details");
     let members = res.data.groupMembers;
@@ -468,7 +468,7 @@ async function shareFiles(event) {
     let groupid = localStorage.getItem("groupid");
     try {
         const response = await axios.post(
-            `http://localhost:3000/upload-files?groupid=${groupid}`,
+            `http://54.219.177.84:3000/upload-files?groupid=${groupid}`,
             formData,
             {
                 headers: {

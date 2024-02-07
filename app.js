@@ -4,18 +4,20 @@ env.config();
 const express = require("express");
 const sequelize = require("./connections/database");
 
+const path = require("path");
+
 const { Server } = require("socket.io");
 const { createServer } = require("http");
 const websocketService = require("./services/web-socket.js");
 const cors = require("cors");
 
 const userRoutes = require("./routes/users.js");
-const User = require("./models/User");
+const User = require("./models/users.js");
 const messageRoutes = require("./routes/messages.js");
-const Message = require("./models/Message.js");
-const Groups = require('./models/Groups.js');
-const ForgotPassword = require("./models/ResetPassword.js");
-const Admins = require("./models/Admins.js");
+const Message = require("./models/messages.js");
+const Groups = require('./models/groups.js');
+const ForgotPassword = require("./models/reset_password.js");
+const Admins = require("./models/admins.js");
 
 
 const app = express();
@@ -43,6 +45,9 @@ io.on("connection", websocketService);
 
 User.hasMany(Message);
 User.hasMany(Admins);
+
+User.hasMany(ForgotPassword);
+ForgotPassword.belongsTo(User);
 
 Groups.belongsToMany(User, { through: "Users_Group" });
 User.belongsToMany(Groups, { through: "Users_Group" });

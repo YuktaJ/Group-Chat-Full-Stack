@@ -1,6 +1,6 @@
 const sequelize = require("../connections/database");
-const ForgotPassword = require("../models/ResetPassword");
-const User = require("../models/User");
+const ForgotPassword = require("../models/reset_password");
+const User = require("../models/users");
 const Sib = require("sib-api-v3-sdk");
 const uuid = require("uuid");
 const bcrypt = require("bcrypt");
@@ -29,7 +29,7 @@ exports.resetPassword = async (req, res) => {
                 to: [{ "email": req.body.email }],
                 subject: "Reset Your Expense Tracker Password",
                 textContent: "Expense Tracker will help to cover your day-to-day expenses.",
-                htmlContent: `<a href="http://localhost:3000/resetpassword/${id}" type="button">Reset password</a>`,
+                htmlContent: `<a href="http://54.219.177.84:3000/reset-password/${id}" type="button">Reset password</a>`,
             })
             console.log("Nitin working");
         }
@@ -54,7 +54,7 @@ exports.getResetPassword = async (req, res) => {
                                         }
                                     </script>
 
-                                    <form action="/updatepassword/${id}" method="post">
+                                    <form action="/update-password/${id}" method="post">
                                         <label for="newpassword">Enter New password</label>
                                         <input name="newpassword" type="password" required>
                                         <input name='resetpasswordid' type='hidden' value='${id}'>

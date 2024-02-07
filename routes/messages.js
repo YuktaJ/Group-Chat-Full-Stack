@@ -17,11 +17,11 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-router.post("/message", authController.authenticate, messageController.postAddMessage);
-router.get("/message", authController.authenticate, messageController.getMessage);
-router.get("/group-users", messageController.groupusers);
-router.post("/group-details", authController.authenticate, messageController.groupdetails);
-router.get("/group-names", authController.authenticate, messageController.groupnames);
+router.post("/messages", authController.authenticate, messageController.postAddMessage);
+router.get("/messages", authController.authenticate, messageController.getMessage);
+router.get("/group-users", messageController.groupUsers);
+router.post("/group-details", authController.authenticate, messageController.groupDetails);
+router.get("/group-names", authController.authenticate, messageController.groupNames);
 router.get("/group-members", messageController.getGroupMembers);
 router.get("/get-admins", messageController.getAdmins)
 router.get("/edit_details", messageController.editDetails);

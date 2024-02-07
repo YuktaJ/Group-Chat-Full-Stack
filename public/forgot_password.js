@@ -8,7 +8,7 @@ async function resetPassword(event) {
         email
     }
     try {
-        let result = await axios.post("http://localhost:3000/resetpassword", obj);
+        let result = await axios.post("http://54.219.177.84:3000/reset-password", obj);
     } catch (error) {
         alert("Incorrect Email id");
     }
