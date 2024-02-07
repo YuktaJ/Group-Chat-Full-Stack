@@ -44,7 +44,7 @@ async function SendChat(event) {
         chatOnScreen(arr, res.data.userId);
     } catch (error) {
 
-        alert("Error in sending message.");
+        console.log("Error in sending message.");
     }
     ScrollToBottom();
 }
@@ -72,7 +72,7 @@ async function getChat(id) {
         StoreMsgLocalStorage(res.data.message, res.data.users);
 
     } catch (error) {
-        alert("Error in fetching message.");
+        console.log("Error in fetching message.");
     }
 }
 
@@ -200,7 +200,7 @@ async function createGroup() {
         console.log(res.data.users);
         UsersOnScreen(res.data.users);
     } catch (error) {
-        alert("Error while creating group.");
+        console.log("Error while creating group.");
     }
 }
 createGroup();
@@ -245,7 +245,7 @@ async function CreateBtn(event) {
         let res = await axios.post("http://54.219.177.84:3000/group-details", obj, { headers: { token: token } });
 
     } catch (error) {
-        alert("Error!");
+        console.log("Error!");
     }
 }
 
@@ -255,7 +255,7 @@ async function GroupsNames() {
         let res = await axios.get("http://54.219.177.84:3000/group-names", { headers: { token: token } });
         ShowGroupsOnScreen(res.data.groupnames, res.data.admins);
     } catch (error) {
-        alert("Error in naming the group.");
+        console.log("Error in naming the group.");
     }
 }
 GroupsNames();
@@ -286,7 +286,11 @@ function ShowGroupsOnScreen(group_arr, admins) {
                 edit_btn.onclick = openForm;
 
                 function openForm() {
+
+                    getEditDetails();
+
                     document.getElementById("overlay").style.display = "flex";
+
                 }
                 document.getElementById("closeForm").addEventListener("click", () => {
                     document.getElementById("overlay").style.display = "none";
@@ -305,19 +309,22 @@ async function getEditDetails() {
     try {
         let id = localStorage.getItem("groupid");
         let res = await axios.get(`http://54.219.177.84:3000/edit_details?data=${id}`);
+
         showGroupMembers(res.data.adminUsers,
             res.data.groupUsers,
             res.data.otherUsers);
     } catch (error) {
-        alert("Error in editing group details.");
+        console.log("Error in editing group details.");
     }
 }
-getEditDetails();
+
 
 function showGroupMembers(admins, members, users) {
+
     let group_admins = document.getElementById("group_edit_admins");
     let group_members = document.getElementById("group_edit_members");
     let group_otherusers = document.getElementById("group_edit_otherusers");
+
     let token = localStorage.getItem("token");
     let parsedToken = parseJwt(token);
     let removeAdminBtn = document.createElement("button");
@@ -377,11 +384,11 @@ async function removeAdmin(event, id) {
             groupid, id
         })
         if (res.status == 200) {
-            alert(res.data.message);
+            console.log(res.data.message);
             window.location.href = "./chat.html"
         }
     } catch (error) {
-        alert("Error in removing user as admin.");
+        console.log("Error in removing user as admin.");
     }
 }
 async function addAdmin(event, id) {
@@ -391,11 +398,11 @@ async function addAdmin(event, id) {
             groupid, id
         })
         if (res.status == 200) {
-            alert(res.data.message);
+            console.log(res.data.message);
             window.location.href = "./chat.html"
         }
     } catch (error) {
-        alert("Error in adding user as admin.");
+        console.log("Error in adding user as admin.");
     }
 }
 async function removeUser(event, id) {
@@ -405,11 +412,11 @@ async function removeUser(event, id) {
             groupid, id
         })
         if (res.status == 200) {
-            alert(res.data.message);
+            console.log(res.data.message);
             window.location.href = "./chat.html"
         }
     } catch (error) {
-        alert("Error in removing user.");
+        console.log("Error in removing user.");
     }
 }
 async function addToGroup(event, id) {
@@ -419,12 +426,12 @@ async function addToGroup(event, id) {
             groupid, id
         })
         if (res.status == 200) {
-            alert(res.data.message);
+            console.log(res.data.message);
             window.location.href = "./chat.html"
         }
 
     } catch (error) {
-        alert("Error in adding user.");
+        console.log("Error in adding user.");
     }
 }
 async function GetGroupMembers(id) {
@@ -497,6 +504,6 @@ async function shareFiles(event) {
         }
     }
     catch (error) {
-        alert("Error in sharing file.");
+        console.log("Error in sharing file.");
     }
 }
