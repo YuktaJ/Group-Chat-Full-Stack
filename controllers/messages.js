@@ -26,7 +26,7 @@ exports.postAddMessage = async (req, res) => {
             message: "Message sent."
         })
     } catch (error) {
-        alert("Error in sending the message.");
+
         res.status(401).json({
             error: "No message sent."
         })
@@ -132,7 +132,9 @@ exports.groupNames = async (req, res, next) => {
             admins: admins
         })
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            error: "Something went wrong."
+        })
     }
 }
 
@@ -145,7 +147,9 @@ exports.getGroupMembers = async (req, res) => {
             groupMembers
         })
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            error: "Something went wrong."
+        })
     }
 }
 
@@ -160,7 +164,9 @@ exports.getAdmins = async (req, res) => {
             admins
         })
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            error: "Something went wrong."
+        })
     }
 }
 
@@ -198,7 +204,9 @@ exports.editDetails = async (req, res) => {
         })
 
     } catch (error) {
-        console.log(error);
+        res.status(500).json({
+            error: "Something went wrong."
+        })
     }
 }
 
@@ -322,7 +330,7 @@ exports.uploadFiles = async (req, res) => {
         }
 
     } catch (error) {
-        console.log(error);
+
         res.status(500).json({
             error: "Something went wrong."
 

@@ -43,7 +43,7 @@ async function SendChat(event) {
         socket.emit("new-group-message", groupId, res.data.text);
         chatOnScreen(arr, res.data.userId);
     } catch (error) {
-        console.log(error);
+
         alert("Error in sending message.");
     }
     ScrollToBottom();
@@ -65,14 +65,14 @@ async function getChat(id) {
             lastId = totalMsg[totalMsg.length - 1].id;
         }
     }
-    console.log(lastId, "Last Id")
+
 
     try {
         let res = await axios.get(`http://54.219.177.84:3000/messages?lastId=${lastId}&groupId=${id}`, { headers: { token: token } });
         StoreMsgLocalStorage(res.data.message, res.data.users);
 
     } catch (error) {
-        console.log(error);
+        alert("Error in fetching message.");
     }
 }
 
@@ -200,7 +200,7 @@ async function createGroup() {
         console.log(res.data.users);
         UsersOnScreen(res.data.users);
     } catch (error) {
-        console.log(error);
+        alert("Error while creating group.");
     }
 }
 createGroup();
@@ -245,7 +245,7 @@ async function CreateBtn(event) {
         let res = await axios.post("http://54.219.177.84:3000/group-details", obj, { headers: { token: token } });
 
     } catch (error) {
-        console.log(error)
+        alert("Error!");
     }
 }
 
@@ -255,7 +255,7 @@ async function GroupsNames() {
         let res = await axios.get("http://54.219.177.84:3000/group-names", { headers: { token: token } });
         ShowGroupsOnScreen(res.data.groupnames, res.data.admins);
     } catch (error) {
-        console.log(error);
+        alert("Error in naming the group.");
     }
 }
 GroupsNames();
@@ -309,7 +309,7 @@ async function getEditDetails() {
             res.data.groupUsers,
             res.data.otherUsers);
     } catch (error) {
-        console.log(error);
+        alert("Error in editing group details.");
     }
 }
 getEditDetails();
@@ -381,7 +381,7 @@ async function removeAdmin(event, id) {
             window.location.href = "./chat.html"
         }
     } catch (error) {
-        console.log(error)
+        alert("Error in removing user as admin.");
     }
 }
 async function addAdmin(event, id) {
@@ -395,7 +395,7 @@ async function addAdmin(event, id) {
             window.location.href = "./chat.html"
         }
     } catch (error) {
-        console.log(error)
+        alert("Error in adding user as admin.");
     }
 }
 async function removeUser(event, id) {
@@ -409,7 +409,7 @@ async function removeUser(event, id) {
             window.location.href = "./chat.html"
         }
     } catch (error) {
-        console.log(error)
+        alert("Error in removing user.");
     }
 }
 async function addToGroup(event, id) {
@@ -424,7 +424,7 @@ async function addToGroup(event, id) {
         }
 
     } catch (error) {
-        console.log(error)
+        alert("Error in adding user.");
     }
 }
 async function GetGroupMembers(id) {
@@ -489,15 +489,14 @@ async function shareFiles(event) {
             // Handle video upload
             chatOnScreen(arr, user_arr);
             socket.emit("new-group-message", groupid, response.data.result, userName);
-            // Implement your video handling code here
         } else {
             // Handle document upload
             chatOnScreen(arr, user_arr);
             socket.emit("new-group-message", groupid, response.data.result, userName);
-            // Implement your document handling code here
+
         }
     }
     catch (error) {
-        console.log(error);
+        alert("Error in sharing file.");
     }
 }

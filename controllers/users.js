@@ -11,7 +11,6 @@ exports.postSignUp = async (req, res) => {
         const phone = req.body.phone;
         const email = req.body.email;
 
-        console.log("Yeh name hai ", name)
         let user = await User.findOne({
             where: {
                 email
